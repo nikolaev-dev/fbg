@@ -103,18 +103,14 @@ resultpage model =
 
 startpage : Html Msg
 startpage =
-    div [ class "row" ]
-        [ div [ class "col-sm-12 col-md-12 col-lg-4" ]
-            [ div [ class "jarviswidget well" ]
-                [ h1 [ class "text-center" ] [ text "First Blockchain Game" ]
-                , div [ class "text-center" ]
-                    [ br [] []
-                    , br [] []
-                    , a [ class "btn btn-success btn-lg", onClick (Page GamePage) ] [ text "Start Game" ]
-                    , br [] []
-                    , br [] []
-                    ]
-                ]
+    div []
+        [ h1 [ class "text-center" ] [ text "First Blockchain Game" ]
+        , div [ class "text-center" ]
+            [ br [] []
+            , br [] []
+            , a [ class "btn btn-success btn-lg", onClick (Page GamePage) ] [ text "Start Game" ]
+            , br [] []
+            , br [] []
             ]
         ]
 
