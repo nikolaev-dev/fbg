@@ -2,26 +2,41 @@ port module Main exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (..)
 
 
 -- model
 
 
 type alias Model =
-    { page : Page
+    { state : State
+    , moves : List Move
+    , my_result : Int
+    , partner_result : Int
     }
-
-
-type Page
-    = NotFound
-    | Start
-    | Game
-    | Result
 
 
 initModel : Model
 initModel =
-    { page = Start }
+    { state = StartPage
+    , moves = []
+    , my_result = 0
+    , partner_result = 0
+    }
+
+
+type State
+    = StartPage
+    | GamePage
+    | ResultPage
+
+
+type alias Move =
+    { my_move : Bool
+    , partner_move : Bool
+    , my_score : Int
+    , your_score : Int
+    }
 
 
 init : ( Model, Cmd Msg )
@@ -34,14 +49,23 @@ init =
 
 
 type Msg
-    = Navigate Page
+    = Page State
+    | Make Move
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Navigate page ->
-            ( { model | page = page }, Cmd.none )
+        Page state ->
+            ( { model | state = state }, Cmd.none )
+
+        _ ->
+            ( model, Cmd.none )
+
+
+make : Model -> Move -> ( Model, Cmd Msg )
+make model move =
+    ( model, Cmd.none )
 
 
 
@@ -52,31 +76,47 @@ view : Model -> Html Msg
 view model =
     let
         page =
-            case model.page of
-                Start ->
-                    div [ class "row" ]
-                        [ div [ class "col-sm-12 col-md-12 col-lg-4" ]
-                            [ div [ class "jarviswidget well" ]
-                                [ div [ class "widget-body" ]
-                                    [ h1 [ class "text-center" ] [ text "First Blockchain Game" ]
-                                    , div [ class "text-center" ]
-                                        [ br [] []
-                                        , br [] []
-                                        , a [ class "btn btn-success btn-lg" ] [ text "Start Game" ]
-                                        , br [] []
-                                        , br [] []
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
+            case model.state of
+                StartPage ->
+                    startpage
 
-                _ ->
-                    div [] []
+                GamePage ->
+                    gamepage model
+
+                ResultPage ->
+                    resultpage model
     in
         div []
             [ page
             ]
+
+
+gamepage : Model -> Html Msg
+gamepage model =
+    div [] [ text "Game Page" ]
+
+
+resultpage : Model -> Html Msg
+resultpage model =
+    div [] [ text "Result Page" ]
+
+
+startpage : Html Msg
+startpage =
+    div [ class "row" ]
+        [ div [ class "col-sm-12 col-md-12 col-lg-4" ]
+            [ div [ class "jarviswidget well" ]
+                [ h1 [ class "text-center" ] [ text "First Blockchain Game" ]
+                , div [ class "text-center" ]
+                    [ br [] []
+                    , br [] []
+                    , a [ class "btn btn-success btn-lg", onClick (Page GamePage) ] [ text "Start Game" ]
+                    , br [] []
+                    , br [] []
+                    ]
+                ]
+            ]
+        ]
 
 
 
