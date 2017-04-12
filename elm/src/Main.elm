@@ -35,7 +35,19 @@ type alias Move =
     { my_move : Bool
     , partner_move : Bool
     , my_score : Int
-    , your_score : Int
+    , partner_score : Int
+    }
+
+
+type alias Choise =
+    { my : Bool
+    , partner : Bool
+    }
+
+
+type alias Points =
+    { my : Int
+    , partner : Int
     }
 
 
@@ -50,7 +62,7 @@ init =
 
 type Msg
     = Page State
-    | Make Move
+    | Make Bool
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -59,13 +71,53 @@ update msg model =
         Page state ->
             ( { model | state = state }, Cmd.none )
 
+        Make bool ->
+            make model bool
+
+
+make : Model -> Bool -> ( Model, Cmd Msg )
+make model choise =
+    let
+        lastMove =
+            List.head model.moves
+
+        partnerNewMove =
+            case lastMove of
+                Nothing ->
+                    True
+
+                Just move ->
+                    move.my_move
+
+        newPoints =
+            scores { my = choise, partner = partnerNewMove }
+
+        newMove =
+            Move choise
+                partnerNewMove
+                newPoints.my
+                newPoints.partner
+
+        newMoves =
+            newMove :: model.moves
+    in
+        ( { model | moves = newMoves }, Cmd.none )
+
+
+scores : Choise -> Points
+scores choise =
+    case [ choise.my, choise.partner ] of
+        [ True, True ] ->
+            { my = 100, partner = 100 }
+
+        [ True, False ] ->
+            { my = -50, partner = 150 }
+
+        [ False, True ] ->
+            { my = 150, partner = -50 }
+
         _ ->
-            ( model, Cmd.none )
-
-
-make : Model -> Move -> ( Model, Cmd Msg )
-make model move =
-    ( model, Cmd.none )
+            { my = -10, partner = -10 }
 
 
 
@@ -93,7 +145,88 @@ view model =
 
 gamepage : Model -> Html Msg
 gamepage model =
-    div [] [ text "Game Page" ]
+    div []
+        [ h1 [ class "text-center" ] [ text "First Blockchain Game" ]
+        , h2 [ class "text-center" ] [ text "Create Your Choise" ]
+        , choiseBlock
+        , scoreBlock model
+        ]
+
+
+scoreBlock : Model -> Html Msg
+scoreBlock model =
+    section []
+        [ div [ class "row" ]
+            [ article [ class "col-sm-12 col-md-12 col-lg-4" ]
+                [ div [ class "jarviswidget" ]
+                    [ header []
+                        [ span [ class "widget-icon" ]
+                            [ i [ class "fa fa-table" ] [] ]
+                        , h2 [] [ text "Game Result" ]
+                        ]
+                    , div []
+                        [ div [ class "widget-body no-padding" ]
+                            [ div [ class "table-responsive" ]
+                                [ scoreBlockTable model
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+
+
+scoreBlockTable : Model -> Html a
+scoreBlockTable model =
+    table [ class "table" ]
+        [ thead []
+            [ tr []
+                [ tr [] [ text "Me" ]
+                , tr [] [ text "Partner" ]
+                , tr [] [ text "My score" ]
+                , tr [] [ text "Partner score" ]
+                ]
+            ]
+        , tbody []
+            (List.map moveTr model.moves)
+        ]
+
+
+moveTr : Move -> Html a
+moveTr move =
+    tr []
+        [ td [] [ text (boolToStr move.my_move) ]
+        , td [] [ text (boolToStr move.partner_move) ]
+        , td [] [ text (toString move.my_score) ]
+        , td [] [ text (toString move.partner_score) ]
+        ]
+
+
+boolToStr : Bool -> String
+boolToStr bool =
+    case bool of
+        True ->
+            "+"
+
+        False ->
+            "-"
+
+
+choiseBlock : Html Msg
+choiseBlock =
+    div [ class "row" ]
+        [ div [ class "col-xs-6 text-center" ]
+            [ a [ class "btn btn-danger btn-circle btn-xl" ]
+                [ i [ class "glyphicon glyphicon-thumbs-down", onClick (Make False) ] []
+                ]
+            ]
+        , div [ class "col-xs-6 text-center" ]
+            [ a [ class "btn btn-success btn-circle btn-xl" ]
+                [ i [ class "glyphicon glyphicon-thumbs-up", onClick (Make True) ] []
+                ]
+            ]
+        ]
 
 
 resultpage : Model -> Html Msg
