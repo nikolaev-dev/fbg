@@ -14,11 +14,14 @@ type alias Model =
 
 type Page
     = NotFound
+    | Start
+    | Game
+    | Result
 
 
 initModel : Model
 initModel =
-    { page = NotFound }
+    { page = Start }
 
 
 init : ( Model, Cmd Msg )
@@ -50,33 +53,30 @@ view model =
     let
         page =
             case model.page of
-                NotFound ->
-                    div [ class "main" ]
-                        [ h1 []
-                            [ text "Page Not Found!" ]
+                Start ->
+                    div [ class "row" ]
+                        [ div [ class "col-sm-12 col-md-12 col-lg-4" ]
+                            [ div [ class "jarviswidget well" ]
+                                [ div [ class "widget-body" ]
+                                    [ h1 [ class "text-center" ] [ text "First Blockchain Game" ]
+                                    , div [ class "text-center" ]
+                                        [ br [] []
+                                        , br [] []
+                                        , a [ class "btn btn-success btn-lg" ] [ text "Start Game" ]
+                                        , br [] []
+                                        , br [] []
+                                        ]
+                                    ]
+                                ]
+                            ]
                         ]
+
+                _ ->
+                    div [] []
     in
         div []
-            [ pageHeader model
-            , page
+            [ page
             ]
-
-
-pageHeader : Model -> Html Msg
-pageHeader model =
-    header []
-        [ a [ href "#/" ] [ text "Race Results" ]
-        , ul []
-            [ li []
-                [ a [ href "#" ] [ text "Link" ]
-                ]
-            ]
-        , ul []
-            [ li []
-                [ a [ href "#" ] [ text "Login" ]
-                ]
-            ]
-        ]
 
 
 
