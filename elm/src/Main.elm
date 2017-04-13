@@ -232,7 +232,7 @@ choiseBlock =
             [ a [ onClick (Make True) ]
                 [ button
                     [ class "btn btn-success btn-circle btn-xl" ]
-                    [ i [ class "glyphicon glyphicon-thumbs-down" ] [] ]
+                    [ i [ class "glyphicon glyphicon-thumbs-up" ] [] ]
                 ]
             ]
         ]
