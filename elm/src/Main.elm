@@ -11,8 +11,9 @@ import Html.Events exposing (..)
 type alias Model =
     { state : State
     , moves : List Move
-    , my_result : Int
-    , partner_result : Int
+    , myResult : Int
+    , partnerResult : Int
+    , maxMoves : Int
     }
 
 
@@ -20,8 +21,9 @@ initModel : Model
 initModel =
     { state = StartPage
     , moves = []
-    , my_result = 0
-    , partner_result = 0
+    , myResult = 0
+    , partnerResult = 0
+    , maxMoves = 4
     }
 
 
@@ -63,6 +65,8 @@ init =
 type Msg
     = Page State
     | Make Bool
+    | NoMsg
+    | NewGame
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -73,6 +77,17 @@ update msg model =
 
         Make bool ->
             make model bool
+
+        NoMsg ->
+            ( model, Cmd.none )
+
+        NewGame ->
+            ( { initModel | state = GamePage }, Cmd.none )
+
+
+newGame : Model -> ( Model, Cmd Msg )
+newGame model =
+    ( model, Cmd.none )
 
 
 make : Model -> Bool -> ( Model, Cmd Msg )
@@ -100,8 +115,22 @@ make model choise =
 
         newMoves =
             newMove :: model.moves
+
+        newMyResult =
+            model.myResult + newPoints.my
+
+        newPartnerResult =
+            model.partnerResult + newPoints.partner
+
+        newState =
+            case List.length newMoves of
+                10 ->
+                    ResultPage
+
+                _ ->
+                    GamePage
     in
-        ( { model | moves = newMoves }, Cmd.none )
+        ( { model | moves = newMoves, myResult = newMyResult, partnerResult = newPartnerResult, state = newState }, Cmd.none )
 
 
 scores : Choise -> Points
@@ -149,31 +178,7 @@ gamepage model =
         [ h1 [ class "text-center" ] [ text "First Blockchain Game" ]
         , h2 [ class "text-center" ] [ text "Create Your Choise" ]
         , choiseBlock
-        , scoreBlock model
-        ]
-
-
-scoreBlock : Model -> Html Msg
-scoreBlock model =
-    section []
-        [ div [ class "row" ]
-            [ article [ class "col-sm-12 col-md-12 col-lg-4" ]
-                [ div [ class "jarviswidget" ]
-                    [ header []
-                        [ span [ class "widget-icon" ]
-                            [ i [ class "fa fa-table" ] [] ]
-                        , h2 [] [ text "Game Result" ]
-                        ]
-                    , div []
-                        [ div [ class "widget-body no-padding" ]
-                            [ div [ class "table-responsive" ]
-                                [ scoreBlockTable model
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+        , scoreBlockTable model
         ]
 
 
@@ -182,10 +187,10 @@ scoreBlockTable model =
     table [ class "table" ]
         [ thead []
             [ tr []
-                [ tr [] [ text "Me" ]
-                , tr [] [ text "Partner" ]
-                , tr [] [ text "My score" ]
-                , tr [] [ text "Partner score" ]
+                [ th [] [ text "Me" ]
+                , th [] [ text "Partner" ]
+                , th [] [ text "My score" ]
+                , th [] [ text "Partner score" ]
                 ]
             ]
         , tbody []
@@ -195,7 +200,7 @@ scoreBlockTable model =
 
 moveTr : Move -> Html a
 moveTr move =
-    tr []
+    tr [ class "text center" ]
         [ td [] [ text (boolToStr move.my_move) ]
         , td [] [ text (boolToStr move.partner_move) ]
         , td [] [ text (toString move.my_score) ]
@@ -217,13 +222,17 @@ choiseBlock : Html Msg
 choiseBlock =
     div [ class "row" ]
         [ div [ class "col-xs-6 text-center" ]
-            [ a [ class "btn btn-danger btn-circle btn-xl" ]
-                [ i [ class "glyphicon glyphicon-thumbs-down", onClick (Make False) ] []
+            [ a [ onClick (Make False) ]
+                [ button
+                    [ class "btn btn-danger btn-circle btn-xl" ]
+                    [ i [ class "glyphicon glyphicon-thumbs-down" ] [] ]
                 ]
             ]
         , div [ class "col-xs-6 text-center" ]
-            [ a [ class "btn btn-success btn-circle btn-xl" ]
-                [ i [ class "glyphicon glyphicon-thumbs-up", onClick (Make True) ] []
+            [ a [ onClick (Make True) ]
+                [ button
+                    [ class "btn btn-success btn-circle btn-xl" ]
+                    [ i [ class "glyphicon glyphicon-thumbs-down" ] [] ]
                 ]
             ]
         ]
@@ -231,7 +240,18 @@ choiseBlock =
 
 resultpage : Model -> Html Msg
 resultpage model =
-    div [] [ text "Result Page" ]
+    div []
+        [ h1 [ class "text-center" ] [ text "First Blockchain Game" ]
+        , h4 [ class "text-center" ] [ text "Ваш результат: ", text (toString model.myResult) ]
+        , h4 [ class "text-center" ] [ text "Результат противника: ", text (toString model.partnerResult) ]
+        , div [ class "text-center" ]
+            [ br [] []
+            , br [] []
+            , a [ class "btn btn-success btn-lg", onClick (NewGame) ] [ text "Start New Game" ]
+            , br [] []
+            , br [] []
+            ]
+        ]
 
 
 startpage : Html Msg

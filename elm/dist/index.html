@@ -11,17 +11,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 		<!-- Basic Styles -->
-		<link rel="stylesheet" type="text/css" media="screen" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 		<link rel="stylesheet" type="text/css" media="screen" href="css/font-awesome.min.css">
-
-		<!-- SmartAdmin Styles : Caution! DO NOT change the order -->
-		<link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-production-plugins.min.css">
-		<link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-production.min.css">
-		<link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-skins.min.css">
-
-		<!-- SmartAdmin RTL Support -->
-		<link rel="stylesheet" type="text/css" media="screen" href="css/smartadmin-rtl.min.css"
-		<link rel="stylesheet" type="text/css" media="screen" href="css/demo.min.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="css/circle-button.css">
 
 		<!-- FAVICONS -->
 		<link rel="shortcut icon" href="img/favicon/favicon.ico" type="image/x-icon">
@@ -29,29 +21,21 @@
 
 		<!-- GOOGLE FONT -->
 		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,300,400,700">
-		<meta name="apple-mobile-web-app-capable" content="yes">
-		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 
 	</head>
 
-	<body class="smart-style-6">
-		<div id="main" role="main">
-			<div id="content">
-				<div class="row">
-					<div class="col-sm-12 col-md-12 col-lg-4">
-						<div class="jarviswidget well">
-							<div class="widget-body">
-								<div id="app"></div>
-							  <script src="bundle.js"></script>
-							  <script>
-							    var app = Elm.Main.embed(document.getElementById("app"));
-							  </script>
-							</div>
-  					</div>
-  				</div>
-  			</div>
-  		</div>
-    </div>
-  </body>
+	<body>
+		<div class="row">
+			<div class="col-sm-12 col-md-12 col-lg-4">
+				<div class="well text-center">
+					<div id="app"></div>
+				  <script src="bundle.js"></script>
+				  <script>
+				    var app = Elm.Main.embed(document.getElementById("app"));
+				  </script>
+				</div>
+			</div>
+		</div>
+	</body>
 
 </html>
